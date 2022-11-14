@@ -19,14 +19,18 @@ app.get('/', (req, res) => {
 })
 
 // get all customers
-app.get('/customers', (req, res) => {
-    res.send('Get all customers')
-})
+app.get("/customers", (req, res) => {
+    Customer.find().then((customers) => {
+        res.send(customers);
+    });
+});
 
 // get a single customer
 app.get('/customers/:id', (req, res) => {
-    res.send('Get a single customer')
-})
+    Customer.findById(req.params.id).then((customer) => {
+        res.send(customer)
+    });
+});
 
 // create a customer
 app.post('/customers', (req, res) => {
@@ -40,12 +44,19 @@ app.post('/customers', (req, res) => {
 
 // update a customer
 app.put('/customers/:id', (req, res) => {
-    res.send('Update a customer')
+    const data = req.body
+    Customer.findByIdAndUpdate(req.params.id, data).then(() => {
+        Customer.findOne({ _id: req.params.id }).then((customer) => {
+            res.send(customer)
+        });
+    });
 })
 
 // delete a customer
 app.delete('/customers/:id', (req, res) => {
-    res.send('Delete a customer')
+    Customer.findByIdAndRemove(req.params.id).then((customer) => {
+        res.send("customer deleted")
+    });
 })
 
 app.listen(port, () => {
